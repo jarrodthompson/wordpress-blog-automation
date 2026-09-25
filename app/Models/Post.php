@@ -11,10 +11,13 @@ class Post extends Model
 
     protected $casts = [
         'blocks' => 'array',
+        'secondary_keywords' => 'array',
+        'generation_history' => 'array',
         'humanised' => 'boolean',
         'grammar_checked' => 'boolean',
         'scheduled_at' => 'datetime',
         'published_at' => 'datetime',
+        'wp_synced_at' => 'datetime',
     ];
 
     public const STAGES = ['planned' => 'Plan & Research', 'writing' => 'In Writing', 'review' => 'Review & Optimise', 'published' => 'Published Live'];

@@ -18,7 +18,7 @@ Google Gemini · WordPress REST API. Runs on SQLite out of the box; MySQL in pro
 | Module | What it does |
 | --- | --- |
 | **Dashboard** | Live hero stats, workflow-stage pipeline, pipeline insights, block-mix donut, publishing cadence, content-activity chart, site performance grade, activity feed, live WP posts. |
-| **Blog Editor** | Generate a draft with Gemini in the brand voice, edit HTML, set stage, save/publish. |
+| **Blog Editor** | Full tabbed production workspace: **Brief** (plan, keyphrase, secondary keywords, SEO brief), **Write** (Gemini Auto-Write, blocks/HTML, humanise), **SEO** (scored on-page audit with one-click refine actions), **Visuals** (featured + in-body images), **Publish** (pre-flight checklist → launch to WordPress), **Social** (auto captions). Includes the Plan→Research→Write→Review→Live rail and generation history. |
 | **Blog Manager** | Every post filtered by workflow stage (Plan → Write → Review → Live). |
 | **AI Image Generator** | Prompt-based visual briefs + the media library grid. |
 | **CRM & Automations** | Trigger→action automations with run counts. |

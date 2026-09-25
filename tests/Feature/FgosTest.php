@@ -50,6 +50,19 @@ class FgosTest extends TestCase
         $this->assertDatabaseHas('posts', ['status' => 'review']);
     }
 
+    public function test_editor_renders_all_tabs(): void
+    {
+        foreach (['brief', 'write', 'seo', 'visuals', 'publish', 'social'] as $tab) {
+            $this->get("/editor?tab={$tab}")->assertOk();
+        }
+
+        $this->get('/editor')
+            ->assertOk()
+            ->assertSee('Plan the Post')
+            ->assertSee('Launch to WordPress')
+            ->assertSee('Generation history');
+    }
+
     public function test_blog_manager_filters_by_stage(): void
     {
         $this->get('/blog-manager?stage=published')

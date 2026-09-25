@@ -59,14 +59,38 @@ class FgosSeeder extends Seeder
             ['A Sanctuary for Stories: How to Build a Reading Nook Children Love', 1275, 11, 'children\'s reading nook', 32],
         ];
         foreach ($published as $i => [$title, $words, $blocks, $kw, $daysAgo]) {
+            $gen = [96, 108, 120, 132, 101][$i % 5];
+            $publishedAt = $now->copy()->subDays($daysAgo);
             $this->post($brand, $title, 'published', $words, $blocks, $kw, $now, [
-                'published_at' => $now->copy()->subDays($daysAgo),
+                'published_at' => $publishedAt,
+                'wp_synced_at' => $publishedAt->copy()->addMinutes(37),
                 'humanised' => true, 'grammar_checked' => true,
-                'gen_time_seconds' => [96, 108, 120, 132, 101][$i % 5],
-                'wp_post_id' => 400 + $i,
+                'seo_score' => [76, 82, 79, 71, 88, 74, 80][$i] ?? 76,
+                'gen_time_seconds' => $gen,
+                'wp_post_id' => 1600 + $i,
                 'blocks' => $this->blockMix($blocks),
+                'secondary_keywords' => $this->secondaryKeywords($kw),
+                'generation_history' => [[
+                    'label' => 'Auto-Write', 'model' => 'gemini/gemini-3.5-flash',
+                    'words' => $words - 1, 'seconds' => 150.0,
+                    'at' => $publishedAt->copy()->setTime(11, 23, 51)->toIso8601String(),
+                ]],
             ]);
         }
+
+        // Match the editor screenshots exactly for the flagship post.
+        Post::where('brand_id', $brand->id)->where('slug', Str::slug($published[0][0]))->update([
+            'initial_prompt' => "The Magic of Adding *Jack and the Beanstalk* to Your Family's Christmas Eve Box Traditions",
+            'seo_score' => 76,
+            'wp_post_id' => 1620,
+            'published_at' => Carbon::create(2026, 9, 17, 12, 0, 34),
+            'wp_synced_at' => Carbon::create(2026, 9, 17, 12, 0, 34),
+            'generation_history' => [[
+                'label' => 'Auto-Write', 'model' => 'gemini/gemini-3.5-flash',
+                'words' => 1618, 'seconds' => 150.0,
+                'at' => Carbon::create(2026, 9, 17, 11, 23, 51)->toIso8601String(),
+            ]],
+        ]);
 
         $this->post($brand, 'The Art of Literary Selection: Why We Curate Every Book With Care for Young Minds', 'review', 1490, 11, 'curated children\'s books', $now, [
             'humanised' => true, 'grammar_checked' => false, 'gen_time_seconds' => 115,
@@ -171,6 +195,8 @@ class FgosSeeder extends Seeder
         Post::create(array_merge([
             'brand_id' => $brand->id,
             'title' => $title,
+            'initial_prompt' => 'The Magic of '.Str::of($title)->after(':')->trim()->limit(70),
+            'content_type' => 'BLOG POST',
             'slug' => Str::slug($title),
             'status' => $status,
             'focus_keyword' => $kw,
@@ -180,6 +206,12 @@ class FgosSeeder extends Seeder
             'block_count' => $blocks,
             'updated_at' => $now->copy()->subDays(rand(1, 30)),
         ], $extra));
+    }
+
+    private function secondaryKeywords(string $kw): array
+    {
+        $pool = ['classic children\'s books', 'hardback gift books', 'heirloom presents', 'family reading traditions', 'nostalgic gifts', 'bedtime stories'];
+        return array_slice(array_values(array_unique(array_merge([$kw.' gift'], $pool))), 0, 4);
     }
 
     private function blockMix(int $total): array
